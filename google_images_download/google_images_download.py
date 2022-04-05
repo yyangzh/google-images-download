@@ -331,32 +331,36 @@ class googleimagesdownload:
 
     # Finding 'Next Image' from the given raw page
     def get_next_tab(self, s):
-        start_line = s.find('class="dtviD"')
+        # start_line = s.find('class="dtviD"')
+        start_line = s.find('class="tzVsfd PKhmud sc-it"')
         if start_line == -1:  # If no links are found then give an error!
             end_quote = 0
             link = "no_tabs"
             return link, '', end_quote
         else:
-            start_line = s.find('class="dtviD"')
+            # start_line = s.find('class="dtviD"')
+            start_line = s.find('class="tzVsfd PKhmud sc-it"')
             start_content = s.find('href="', start_line + 1)
-            end_content = s.find('">', start_content + 1)
-            url_item = "https://www.google.com" + str(s[start_content + 6:end_content])
+            end_content = s.find('"', start_content + 6)
+            url_item = "https://www.google.com" + str(s[start_content+6: end_content])
             url_item = url_item.replace('&amp;', '&')
 
-            start_line_2 = s.find('class="dtviD"')
-            s = s.replace('&amp;', '&')
-            start_content_2 = s.find(':', start_line_2 + 1)
-            end_content_2 = s.find('&usg=', start_content_2 + 1)
-            url_item_name = str(s[start_content_2 + 1:end_content_2])
+            # start_line_2 = s.find('class="dtviD"')
+            start_line_2 = s.find('class="tzVsfd PKhmud sc-it"')
+            # s = s.replace('&amp;', '&')
+            start_content_2 = s.find('aria-label=', start_line_2 + 1)
+            start_content_2 = s.find('"', start_content_2+ 1)
+            end_content_2 = s.find('"', start_content_2 + 1)
+            url_item_name = str(s[start_content_2 + 1: end_content_2])
 
-            chars = url_item_name.find(',g_1:')
-            chars_end = url_item_name.find(":", chars + 6)
-            if chars_end == -1:
-                updated_item_name = (url_item_name[chars + 5:]).replace("+", " ")
-            else:
-                updated_item_name = (url_item_name[chars + 5:chars_end]).replace("+", " ")
+            # chars = url_item_name.find(',g_1:')
+            # chars_end = url_item_name.find(":", chars + 6)
+            # if chars_end == -1:
+            #     updated_item_name = (url_item_name[chars + 5:]).replace("+", " ")
+            # else:
+            #     updated_item_name = (url_item_name[chars + 5:chars_end]).replace("+", " ")
 
-            return url_item, updated_item_name, end_content
+            return url_item, url_item_name, end_content
 
     # Getting all links with the help of '_images_get_next_image'
     def get_all_tabs(self, page):
@@ -1081,10 +1085,11 @@ class googleimagesdownload:
                                                 arguments['specific_site'],
                                                 arguments['safe_search'])  # building main search url
 
+                    _, tabs = self.download_page(url)
                     if limit < 101:
-                        images, tabs = self.download_page(url)  # download page
+                        images, _ = self.download_page(url)  # download page
                     else:
-                        images, tabs = self.download_extended_page(url, arguments['chromedriver'])
+                        images, _ = self.download_extended_page(url, arguments['chromedriver'])
 
                     if not arguments["silent_mode"]:
                         if arguments['no_download']:
